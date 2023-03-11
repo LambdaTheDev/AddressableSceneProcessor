@@ -8,7 +8,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 
-namespace Firux.Site75.Game.Core.Scenes
+namespace Core.Scenes
 {
     // Scene processor written for Addressable scene loading
     public class AddressableSceneProcessor : SceneProcessorBase
