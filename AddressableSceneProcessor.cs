@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using FishNet.Managing.Scened;
@@ -72,11 +72,18 @@ namespace Firux.Site75.Game.Core.Scenes
             {
                 AsyncOperationHandle<SceneInstance> unloadHandle = Addressables.UnloadSceneAsync(loadHandle);
                 CurrentAsyncOperation = unloadHandle;
+                StartCoroutine(UnloadSceneAsync(loadHandle, scene.handle));
             }
             else
             {
                 Debug.LogWarning("Tried to unload scene (name=" + scene.name + "), through SceneProcessor, although load reference could not been found!");
             }
+        }
+
+        private IEnumerator UnloadSceneAsync(AsyncOperationHandle<SceneInstance> unloadHandle, int sceneHandle)
+        {
+            yield return unloadHandle;
+            LoadedScenesByHandle.Remove(sceneHandle);
         }
 
         public override bool IsPercentComplete()
@@ -135,6 +142,13 @@ namespace Firux.Site75.Game.Core.Scenes
                 }
                 yield return null;
             } while (notDone);
+            
+            // All loading async ops are done, let's load the scenes into system
+            foreach (AsyncOperationHandle<SceneInstance> ao in LoadingAsyncOperations)
+            {
+                int loadedSceneIndex = ao.Result.Scene.handle;
+                LoadedScenesByHandle.Add(loadedSceneIndex, ao);
+            }
         }
 
 
